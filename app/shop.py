@@ -111,13 +111,20 @@ def sales():
         try:
             product_ids=request.form.getlist("product_id")
             quantities=request.form.getlist("quantity")
+            requested={}
+            for pid,q in zip(product_ids,quantities):
+                if not pid:
+                    raise ValueError("Choose a product for every sale line.")
+                qty=int(q)
+                product_id=int(pid)
+                if qty<=0:
+                    raise ValueError("Quantities must be greater than zero.")
+                requested[product_id]=requested.get(product_id,0)+qty
+
             lines=[]
             total=0.0
-            for pid,q in zip(product_ids,quantities):
-                qty=int(q)
-                if qty<=0:
-                    raise ValueError()
-                p=db.execute("SELECT * FROM products WHERE id=? AND is_active=1",(int(pid),)).fetchone()
+            for product_id,qty in requested.items():
+                p=db.execute("SELECT * FROM products WHERE id=? AND is_active=1",(product_id,)).fetchone()
                 if p is None or p["quantity"]<qty:
                     raise ValueError(f"Insufficient stock for {p['name'] if p else 'selected product'}.")
                 line=qty*float(p["selling_price"])
