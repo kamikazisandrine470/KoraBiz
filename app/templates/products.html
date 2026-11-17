@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Products & Inventory</h1>
+{% if current_user['role']=='owner' %}
+<div class="panel"><h2>Add product</h2>
+<form method="post" class="grid-form">
+<label>Product name<input name="name" required></label>
+<label>Category<select name="category_id"><option value="">No category</option>{% for c in categories %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></label>
+<label>Buying price (RWF)<input type="number" min="0" step="1" name="buying_price" required></label>
+<label>Selling price (RWF)<input type="number" min="0" step="1" name="selling_price" required></label>
+<label>Opening quantity<input type="number" min="0" name="quantity" value="0" required></label>
+<label>Low-stock level<input type="number" min="0" name="low_stock_level" value="5" required></label>
+<button>Add product</button></form></div>
+<div class="panel"><h2>Add category</h2><form method="post" action="{{ url_for('shop.add_category') }}" class="inline-form"><input name="name" placeholder="Category name" required><button>Add category</button></form></div>
+{% endif %}
+<h2>Product list</h2><table><tr><th>Name</th><th>Category</th><th>Buying</th><th>Selling</th><th>Stock</th><th>Stock in</th>{% if current_user['role']=='owner' %}<th>Action</th>{% endif %}</tr>
+{% for p in products %}<tr><td>{{ p.name }}</td><td>{{ p.category or '—' }}</td><td>{{ p.buying_price|rwf }}</td><td>{{ p.selling_price|rwf }}</td><td>{% if p.quantity<=p.low_stock_level %}<strong class="low">{{ p.quantity }}</strong>{% else %}{{ p.quantity }}{% endif %}</td><td><form class="inline-form" method="post" action="{{ url_for('shop.stock_in',product_id=p.id) }}"><input aria-label="Quantity to add" type="number" name="amount" min="1" placeholder="Qty" required><button class="small">Add</button></form></td>{% if current_user['role']=='owner' %}<td><form method="post" action="{{ url_for('shop.deactivate_product',product_id=p.id) }}" onsubmit="return confirm('Deactivate this product?')"><button class="small danger">Deactivate</button></form></td>{% endif %}</tr>
+{% else %}<tr><td colspan="7">No products yet.</td></tr>{% endfor %}</table>
+{% endblock %}

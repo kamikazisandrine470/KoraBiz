@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}KoraBiz{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header><a class="brand" href="{{ url_for('shop.dashboard') }}">KoraBiz</a>
+{% if current_user %}
+<nav>
+<a href="{{ url_for('shop.dashboard') }}">Dashboard</a>
+<a href="{{ url_for('shop.products') }}">Products</a>
+<a href="{{ url_for('shop.sales') }}">Sales</a>
+<a href="{{ url_for('shop.expenses') }}">Expenses</a>
+{% if current_user['role']=='owner' %}<a href="{{ url_for('shop.reports') }}">Reports</a>{% endif %}
+</nav>
+<div class="user">{{ current_user['full_name'] }} · {{ current_user['role']|title }}
+<form method="post" action="{{ url_for('auth.logout') }}"><button class="small secondary">Logout</button></form></div>
+{% endif %}
+</header>
+<main>
+{% for category,message in get_flashed_messages(with_categories=true) %}
+<div class="flash {{ category }}">{{ message }}</div>
+{% endfor %}
+{% block content %}{% endblock %}
+</main>
+<footer>KoraBiz · Retail Shop Management · RWF</footer>
+</body></html>

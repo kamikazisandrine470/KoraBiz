@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Business reports</h1><div class="panel"><form class="inline-form" method="get"><label>From <input type="date" name="start" value="{{ start }}"></label><label>To <input type="date" name="end" value="{{ end }}"></label><button>Generate</button></form></div>
+<div class="cards">
+<div class="card"><span>Sales revenue</span><strong>{{ sales_total|rwf }}</strong></div>
+<div class="card"><span>Cost of goods sold</span><strong>{{ cogs|rwf }}</strong></div>
+<div class="card"><span>Gross profit</span><strong>{{ gross|rwf }}</strong></div>
+<div class="card"><span>Expenses</span><strong>{{ expenses_total|rwf }}</strong></div>
+<div class="card"><span>Operating result</span><strong>{{ operating|rwf }}</strong></div>
+</div>
+<p class="muted">Operating result = sales revenue − cost of goods sold − recorded expenses.</p>
+{% endblock %}

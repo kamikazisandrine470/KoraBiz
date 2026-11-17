@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dashboard</h1><p class="muted">Today's shop overview</p>
+<div class="cards">
+<div class="card"><span>Today's sales</span><strong>{{ sales|rwf }}</strong></div>
+<div class="card"><span>Active products</span><strong>{{ products }}</strong></div>
+<div class="card"><span>Inventory value (buying cost)</span><strong>{{ stock_value|rwf }}</strong></div>
+<div class="card"><span>Today's expenses</span><strong>{{ expenses|rwf }}</strong></div>
+</div>
+<h2>Low-stock products</h2>
+{% if low %}<table><tr><th>Product</th><th>Quantity</th><th>Alert level</th></tr>{% for p in low %}<tr><td>{{ p.name }}</td><td>{{ p.quantity }}</td><td>{{ p.low_stock_level }}</td></tr>{% endfor %}</table>{% else %}<p>No low-stock products.</p>{% endif %}
+<h2>Recent sales</h2>
+<table><tr><th>Receipt</th><th>Attendant</th><th>Total</th><th>Date</th></tr>
+{% for s in recent %}<tr><td>{{ s.receipt_number }}</td><td>{{ s.full_name }}</td><td>{{ s.total_amount|rwf }}</td><td>{{ s.sale_date }}</td></tr>{% else %}<tr><td colspan="4">No sales recorded yet.</td></tr>{% endfor %}</table>
+{% endblock %}

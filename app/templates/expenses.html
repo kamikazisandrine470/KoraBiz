@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Expenses</h1><div class="panel"><h2>Record expense</h2>
+<form method="post" class="grid-form">
+<label>Expense title<input name="title" required></label>
+<label>Category<select name="category" required><option value="">Choose category</option><option>Rent</option><option>Transport</option><option>Utilities</option><option>Salaries</option><option>Other</option></select></label>
+<label>Amount (RWF)<input type="number" name="amount" min="1" step="1" required></label>
+<label>Notes<input name="notes"></label><button>Save expense</button>
+</form></div>
+<h2>Recent expenses</h2><table><tr><th>Title</th><th>Category</th><th>Amount</th><th>Recorded by</th><th>Date</th></tr>{% for e in expenses %}<tr><td>{{ e.title }}</td><td>{{ e.category }}</td><td>{{ e.amount|rwf }}</td><td>{{ e.full_name }}</td><td>{{ e.expense_date }}</td></tr>{% else %}<tr><td colspan="5">No expenses yet.</td></tr>{% endfor %}</table>
+{% endblock %}

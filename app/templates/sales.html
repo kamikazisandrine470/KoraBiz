@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Sales</h1>
+<div class="panel"><h2>Record a sale</h2><p class="muted">Choose one product per line. Totals and stock updates are calculated on the server.</p>
+<form method="post">
+<div id="sale-lines"><div class="sale-line"><select name="product_id" required><option value="">Choose product</option>{% for p in products %}<option value="{{ p.id }}">{{ p.name }} · {{ p.quantity }} available · {{ p.selling_price|rwf }}</option>{% endfor %}</select><input type="number" name="quantity" min="1" value="1" required></div></div>
+<button type="button" class="secondary" onclick="addLine()">Add another item</button> <button>Complete sale</button>
+</form></div>
+<h2>Recent sales</h2><table><tr><th>Receipt</th><th>Attendant</th><th>Total</th><th>Date</th></tr>{% for s in history %}<tr><td>{{ s.receipt_number }}</td><td>{{ s.full_name }}</td><td>{{ s.total_amount|rwf }}</td><td>{{ s.sale_date }}</td></tr>{% else %}<tr><td colspan="4">No sales yet.</td></tr>{% endfor %}</table>
+<script>
+function addLine(){
+ const first=document.querySelector('.sale-line');
+ const copy=first.cloneNode(true);
+ copy.querySelector('select').selectedIndex=0;
+ copy.querySelector('input').value=1;
+ document.getElementById('sale-lines').appendChild(copy);
+}
+</script>
+{% endblock %}

@@ -1,56 +1,47 @@
 # KoraBiz
 
-KoraBiz is a web-based management system for one small general retail shop in Rwanda.
+A beginner-friendly Flask + SQLite retail shop management MVP for one shop in Rwanda.
 
-## Technology
+## Features
+- Owner and attendant accounts, hashed passwords, login and logout
+- Product and category management
+- Stock-in and stock adjustment history
+- Sales with server-side totals and stock checks
+- Expense recording
+- Dashboard and date-based reports
+- RWF currency display
 
-- Frontend: HTML, CSS, vanilla JavaScript
-- Backend: Python and Flask
-- Database: SQLite
-- Currency: Rwandan francs (RWF)
+## Requirements
+- Python 3.10 or newer
+- Windows, macOS or Linux
 
-## Current progress
+## Windows setup (PowerShell)
+Open this folder in VS Code. Choose **Terminal > New Terminal** and run:
 
-The first development stage creates the Flask application structure and SQLite database schema. The login, product, inventory, sales, expense, reporting, and dashboard features will be implemented in later stages.
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m flask --app run.py init-db
+python -m flask --app run.py create-owner
+python run.py
+```
 
-## Run on Windows
+Open http://127.0.0.1:5000
 
-Open PowerShell in this KoraBiz folder.
+The first Owner account is created by the `create-owner` command. Passwords are hashed.
 
-1. Create a virtual environment:
+## GitHub
+If this is being copied into your existing KoraBiz repository, first back up the old folder. Copy the contents of this folder into your repository's KoraBiz folder, replacing matching application files but keeping `.git` and `.venv`. Then:
 
-   ```powershell
-   python -m venv .venv
-   ```
+```powershell
+git status
+git add .
+git commit -m "Build KoraBiz retail management MVP"
+git push
+```
 
-2. Activate it:
+Do not add `.venv`, `instance`, or secrets to Git.
 
-   ```powershell
-   .\.venv\Scripts\Activate.ps1
-   ```
-
-3. Install Flask:
-
-   ```powershell
-   python -m pip install -r requirements.txt
-   ```
-
-4. Create the database:
-
-   ```powershell
-   flask --app run.py init-db
-   ```
-
-5. Start the application:
-
-   ```powershell
-   python run.py
-   ```
-
-6. Open `http://127.0.0.1:5000` in your browser.
-
-The SQLite database is created automatically in the `instance` folder when you run the database initialization command.
-
-## Important
-
-The development secret key in `app/__init__.py` is only a local placeholder. It must be replaced with a private secret before deployment. Do not commit passwords, secret keys, or the local database file to GitHub.
+## Important limitations
+This is a school-project MVP, not a production-ready financial system. Before public deployment, add CSRF protection, HTTPS, secure cookie settings, backups, stronger audit controls, and independent security testing. Test all workflows with sample data first.
