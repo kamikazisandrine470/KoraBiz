@@ -1,6 +1,6 @@
 from datetime import date
 from uuid import uuid4
-from flask import Blueprint, render_template, request, redirect, url_for, flash, g
+from flask import Blueprint, render_template, request, redirect, url_for, flash, g, jsonify
 from .db import get_db
 from .auth import login_required, owner_required
 
@@ -185,3 +185,38 @@ def reports():
     cogs=db.execute("SELECT COALESCE(SUM(si.quantity*si.unit_cost),0) n FROM sale_items si JOIN sales s ON s.id=si.sale_id WHERE date(s.sale_date) BETWEEN ? AND ?",(start,end)).fetchone()["n"]
     expenses_total=db.execute("SELECT COALESCE(SUM(amount),0) n FROM expenses WHERE date(expense_date) BETWEEN ? AND ?",(start,end)).fetchone()["n"]
     return render_template("reports.html",start=start,end=end,sales_total=sales_total,cogs=cogs,expenses_total=expenses_total,gross=float(sales_total)-float(cogs),operating=float(sales_total)-float(cogs)-float(expenses_total))
+
+
+@bp.post("/chatbot/reply")
+@login_required
+def chatbot_reply():
+    """Answer common KoraBiz how-to questions without sending data outside the app."""
+    message = request.get_json(silent=True) or {}
+    question = str(message.get("message", "")).strip().lower()[:500]
+    if not question:
+        return jsonify({"reply": "Please type a question about using KoraBiz."}), 400
+
+    answers = [
+        (("add product", "new product", "create product"),
+         "To add a product, open Products. Owners can fill in the product name, category, buying price, selling price, opening quantity and low-stock level, then select Add product."),
+        (("stock", "restock", "add inventory", "inventory"),
+         "Open Products & Inventory. Find the item, enter the quantity in its Stock in box, then select Add. The quantity must be a positive whole number."),
+        (("make sale", "record sale", "sell", "sales"),
+         "Open Sales, choose a product and quantity, then select Complete sale. KoraBiz calculates the total and reduces stock. A sale is rejected if there is not enough stock."),
+        (("expense", "record expense", "add expense"),
+         "Open Expenses. Enter the expense title, category, amount in RWF and optional notes, then select Save expense."),
+        (("report", "profit", "gross profit", "operating result"),
+         "Owners can open Reports and choose a date range. Gross profit is sales revenue minus cost of goods sold. Operating result also subtracts recorded expenses."),
+        (("low stock", "low-stock", "alert"),
+         "The dashboard lists active products whose quantity is at or below their low-stock level. You can add stock from the Products page."),
+        (("attendant", "user account", "create user", "staff"),
+         "An Owner can create an attendant account from the terminal with: python -m flask --app run.py create-attendant. The attendant can record sales, stock received and expenses, but cannot access Owner reports or add products."),
+        (("login", "password", "sign in"),
+         "Use the username and password created for your account on the login page. If you cannot sign in, ask the shop Owner to check that your account is active."),
+        (("currency", "rwf", "franc"),
+         "KoraBiz displays shop amounts in Rwandan francs (RWF). Enter prices and expenses as numbers; the system adds the RWF label."),
+    ]
+    for keywords, answer in answers:
+        if any(word in question for word in keywords):
+            return jsonify({"reply": answer})
+    return jsonify({"reply": "I can help with products, stock, sales, expenses, reports, low-stock alerts, accounts and login. Try asking: 'How do I record a sale?'"})

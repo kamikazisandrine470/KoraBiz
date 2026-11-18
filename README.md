@@ -45,3 +45,7 @@ Do not add `.venv`, `instance`, or secrets to Git.
 
 ## Important limitations
 This is a school-project MVP, not a production-ready financial system. Before public deployment, add CSRF protection, HTTPS, secure cookie settings, backups, stronger audit controls, and independent security testing. Test all workflows with sample data first.
+
+
+## Built-in help chatbot
+The app includes a small rule-based help assistant for common questions about products, stock, sales, expenses, reports and login. It runs locally in Flask, requires no API key or paid service, and does not read or modify shop records. It is not a generative-AI chatbot.

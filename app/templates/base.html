@@ -25,5 +25,17 @@
 {% endfor %}
 {% block content %}{% endblock %}
 </main>
+{% if current_user %}
+<div class="kb-chat" id="kbChat">
+  <button class="kb-chat-toggle" id="kbChatToggle" type="button" aria-expanded="false">KoraBiz Help</button>
+  <section class="kb-chat-panel" id="kbChatPanel" hidden aria-label="KoraBiz help chatbot">
+    <div class="kb-chat-heading"><strong>KoraBiz Assistant</strong><button type="button" id="kbChatClose" aria-label="Close chat">×</button></div>
+    <div class="kb-chat-messages" id="kbChatMessages" aria-live="polite"><p class="kb-bot-message">Hello! I can answer questions about using KoraBiz. What do you need help with?</p></div>
+    <form id="kbChatForm" class="kb-chat-form"><input id="kbChatInput" maxlength="500" placeholder="Ask about sales, stock..." autocomplete="off" required><button type="submit">Send</button></form>
+    <small class="kb-chat-note">Help guide only. It does not view or change your shop records.</small>
+  </section>
+</div>
+<script src="{{ url_for('static', filename='chatbot.js') }}" defer></script>
+{% endif %}
 <footer>KoraBiz · Retail Shop Management · RWF</footer>
 </body></html>
