@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from flask import Flask, redirect, url_for, g
-from .db import init_app as init_db_app
+from .db import init_app as init_db_app, init_db
 from .auth import bp as auth_bp, load_logged_in_user
 from .shop import bp as shop_bp
 
@@ -15,6 +15,8 @@ def create_app(test_config=None):
         app.config.update(test_config)
     Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     init_db_app(app)
+    with app.app_context():
+        init_db()
     app.before_request(load_logged_in_user)
     app.register_blueprint(auth_bp)
     app.register_blueprint(shop_bp)
